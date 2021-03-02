@@ -20,6 +20,7 @@ async function login(name,password) {
         const validPassword = await bcrypt.compare(password,user.hashedPassword)
         const token = jwt.sign({ sub: user.name, role: user.role }, process.env.JWT_SECRET);
         const modified ={
+            id: user._id,
             name: user.name,
             role: user.role,
             token: token

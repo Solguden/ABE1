@@ -20,6 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use('/users', usersRouter);
 app.use('/hotels',require('./controllers/hotel_controller'));
+app.use('/rooms',require('./controllers/room_controller'));
 // app.use('/rooms',roomsRouter);
 app.use('/users',require('./controllers/user_controller'))
 

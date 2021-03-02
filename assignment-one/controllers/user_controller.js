@@ -4,11 +4,11 @@ const express = require('express');
 const router = express.Router();
 const authorize = require('../helpers/authorize')
 
+router.post('/',registerUser) 
+router.post('/login', login)
 router.get('/',authorize(Role.Admin), getUsers)
-router.post('/',registerUser)
 router.get('/:currentUserId/:userId',authorize(Role.Admin), getUserById)
 router.post('/upgrade/:currentUserId/:userId', authorize(Role.Admin), upgradeUser)
-router.post('/login', login)
 
 module.exports = router;
 
