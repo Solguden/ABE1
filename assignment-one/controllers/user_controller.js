@@ -2,18 +2,23 @@ const userService = require('../services/user_service')
 const Role = require('../helpers/role');
 const express = require('express');
 const router = express.Router();
+const authorize = require('../helpers/authorize')
 
-// register = (req, res, next) => {
-//     userService.createUser(req.body)
-//         .then(user)
-// }
-
-router.get('/', getUsers)
+router.get('/',authorize(Role.Admin), getUsers)
 router.post('/',registerUser)
-router.get('/:currentUserId/:userId', getUserById)
-router.post('/upgrade/:currentUserId/:userId', upgradeUser)
+router.get('/:currentUserId/:userId',authorize(Role.Admin), getUserById)
+router.post('/upgrade/:currentUserId/:userId', authorize(Role.Admin), upgradeUser)
+router.post('/login', login)
 
 module.exports = router;
+
+function login(req,res,next){
+    userService.login(req.body.name,req.body.password)
+    .then(result=> {
+        res.json(result)
+    })
+    .catch(err => next(err))
+}
 
 function registerUser(req, res, next){
     let role = req.body.role ? req.body.role : Role.User
@@ -31,9 +36,6 @@ function getUsers (req, res, next){
 async function getUserById (req, res, next) {
     userService.getById(req.params.currentUserId)
         .then(user => {
-            if(user.role != Role.Admin){
-                return res.status(401).json({message: 'Unauthorized'});
-            }
             userService.getById(req.params.userId)
             .then(user =>  res.json(user))
             .catch(err => next(err))
@@ -44,9 +46,6 @@ async function getUserById (req, res, next) {
 async function upgradeUser (req, res, next){
     userService.getById(req.params.currentUserId)
         .then(user => {
-            if(user.role != Role.Admin){
-                return res.status(401).json({message: 'Unauthorized'});
-            }
             userService.getById(req.params.userId)
             .then(user =>  {
                 userService.upgradeToManager(user.id)
