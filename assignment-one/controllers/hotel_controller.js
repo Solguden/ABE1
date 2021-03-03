@@ -6,7 +6,7 @@ const router = express.Router();
 const authorize = require('../helpers/authorize')
 
 router.get('/:hotelId', authorize(), getHotelById);
-router.post('/:currentUserId/addHotel', createHotel)
+router.post('/:currentUserId/addHotel',authorize(Role.Manager), createHotel)
 router.post('/:currentUserId/:hotelId/addRoom', authorize(Role.Manager), createRoom)
 // router.get('/:hotelId/rooms', getAvailableRoomsByHotelId)
 
@@ -31,7 +31,7 @@ async function createRoom(req, res, next) {
             if(hotel.managerId != req.params.currentUserId){
                 return res.status(401).json({message: 'Unauthorized'});
             }
-            hotelService.addRoom(req.body.number, hotel.name, hotel.id)
+            hotelService.addRoom(req.body.number, hotel.name, req.params.hotelId)
             .then(room => res.json(room))
             .catch(err => next(err))
             // hotelService.updateHotelRooms(hotel.id, room)

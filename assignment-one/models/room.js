@@ -15,8 +15,7 @@ const RoomSchema = Schema({
     default: true 
   },
   hotelId: { 
-    type: String, 
-    required: true 
+    type: String
   }
 });
 
